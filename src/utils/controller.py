@@ -2,18 +2,20 @@
 import logging
 import os
 from src.utils import config
-from src.make_feature import MakeFeatures, PrepModelData
+from src.make_feature import MakeFeatures, PrepModelData, MakeMarketData
 
 class MainController:
     """ Decide which parts of the module to update. """
     logger = logging.getLogger(f"{__name__}.MainController")
-    synch_data = True
+    synch_data = False
     make_data = False
+    market_data = True
 
 
     def pipeline_control(self):
         mf = MakeFeatures()
         pdp = PrepModelData()
+        market = MakeMarketData()
 
         if self.synch_data:
             self.logger.info('SYNC DATA')
@@ -35,5 +37,6 @@ class MainController:
             if (dp and he and pc):
                 mf.notify(True, 'prep_demand_plan and prep_harvest_estimates and prep_pack_capacity')
 
-
+        if self.market_data:
+            market.save_market()
 

@@ -1,5 +1,6 @@
 import logging
 import datetime
+import os
 
 import pandas as pd
 from src.utils import config
@@ -234,4 +235,23 @@ class GetLocalData:
             WHERE extract_datetime = (SELECT MAX(extract_datetime)FROM dss.pack_capacity_data);
         """
         df = self.database_dss.select_query(sql)
+        return df
+
+
+class GetMarketData:
+    """ Class to extract planning data"""
+    logger = logging.getLogger(f"{__name__}.GetPlanningData")
+    database_central = DatabaseModelsClass('MYSQLCENTRAL')
+
+    def get_market_data(self):
+        self.logger.info(f"---  Getting planning data from central")
+        """ Get blok plan for future. """
+        seasons = [2022, 2021]
+
+        df = pd.DataFrame()
+        for season in seasons:
+            path = os.path.join(config.ROOTDIR, 'data', 'external', f'Production_Regions_{season}.xlsx')
+            dft = pd.read_excel(path)
+            df = pd.concat([df,dft])
+            
         return df

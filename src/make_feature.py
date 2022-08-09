@@ -9,7 +9,7 @@ from dotenv import find_dotenv, load_dotenv
 
 from src.utils import config
 from src.utils.connect import DatabaseModelsClass
-from src.get_data import GetPlanningData, GetLocalData
+from src.get_data import GetPlanningData, GetLocalData, GetMarketData
 
 
 class MakeFeatures:
@@ -194,4 +194,38 @@ class PrepModelData:
 
         return success
 
+
+class MakeMarketData:
+    """ Class to make features of ... """
+    logger = logging.getLogger(f"{__name__}.MakeFeatures")
+    market = GetMarketData()
+    database_dss = DatabaseModelsClass('MYSQLLINUX')
+
+    def save_market(self):
+        self.logger.info(f"- Retrieve and save planning data")
         
+        df = self.market.get_market_data()
+        df = df.rename(columns={
+                'Season': 'season',
+                'Week': 'week',
+                'Commodity': 'commodity',
+                'Production ': 'production_area',
+                'Country': 'export_country',
+                'Country Desc': 'export_country_description',
+                'Combined Region': 'region',
+                'Region Desc': 'region_description',
+                'Variety ': 'variety',
+                'Variety Desc' : 'variety_description',
+                'Port': 'port',
+                'Port Desc': 'port_description',
+                'LoadPort': 'load_port',
+                'Size_Count': 'size',
+                'Grade': 'grade',
+                'Plt_Qty': 'pallets',
+                'Ctn_qty': 'cartons',
+                'Eqv_ctn': 'stdunits'})
+
+        print(df.head(5))
+        self.database_dss.insert_table(df, "market_data", "dss", if_exists='replace')
+
+        return 
