@@ -1,7 +1,7 @@
 Jolene PhD
 ==============================
 
-PhD models for Jolene Wium. PhD student at the University of Stellenbosch.
+Pipeline module to synch data to data warehouse.
 
 Project Organization
 ------------
